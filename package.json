@@ -1,0 +1,14 @@
+{
+  "name": "bio-ethanol-buyer",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/index.mjs"
+  },
+  "packageManager": "yarn@3.1.1",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "jsdom": "^19.0.0",
+    "xmldom": "^0.6.0",
+    "xpath": "^0.0.32"
+  }
+}
