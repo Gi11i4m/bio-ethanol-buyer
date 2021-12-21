@@ -1,5 +1,6 @@
 import axios from "axios";
-import { bioEthanols } from "./bio-ethanols.mjs";
+import { existsSync, readFileSync, appendFileSync, writeFileSync } from "fs";
+import { bioEthanols, productUrl } from "./bio-ethanols.mjs";
 
 await (async () => {
   console.log(
@@ -7,10 +8,10 @@ await (async () => {
   );
 
   const prices = await Promise.all(
-    bioEthanols.map(({ provider, url }) =>
+    bioEthanols.map((bioEthanol) =>
       axios
-        .get(`${provider.url}${url}`)
-        .then(({ data }) => provider.priceParser(data))
+        .get(productUrl(bioEthanol))
+        .then(({ data }) => bioEthanol.provider.priceParser(data))
     )
   );
 
@@ -25,7 +26,8 @@ await (async () => {
     })
   );
 
-  const highestPPLP = bioEthanolsWithPriceInfo.reduce(
+  /** @type import('./bio-ethanols.mjs').BioEthanol */
+  const highest = bioEthanolsWithPriceInfo.reduce(
     (acc, curr) => (curr.pricePerLiter > acc.pricePerLiter ? curr : acc),
     {
       provider: { url: "https://emp.ty" },
@@ -34,14 +36,62 @@ await (async () => {
     }
   );
   console.log(
-    `📈 Highest price per liter is ${highestPPLP.pricePerLiter} at ${highestPPLP.provider.url}${highestPPLP.url}`
+    `📈 Highest price per liter is ${highest.pricePerLiter} at ${productUrl(
+      highest
+    )}`
   );
 
-  const lowestPPLP = bioEthanolsWithPriceInfo.reduce(
+  /** @type import('./bio-ethanols.mjs').BioEthanol */
+  const lowest = bioEthanolsWithPriceInfo.reduce(
     (acc, curr) => (curr.pricePerLiter < acc.pricePerLiter ? curr : acc),
     { provider: { url: "https://emp.ty" }, pricePerLiter: Infinity }
   );
   console.log(
-    `📉 Lowest price per liter is ${lowestPPLP.pricePerLiter} at ${lowestPPLP.provider.url}${lowestPPLP.url}`
+    `📉 Lowest price per liter is ${lowest.pricePerLiter} at ${productUrl(
+      lowest
+    )}`
+  );
+
+  const priceFileName = "prices.json";
+  const mailFileName = "mail.md";
+
+  if (existsSync(priceFileName)) {
+    console.log(`♻️ Comparing to previous prices`);
+    const { highestPPL, lowestPPL } = JSON.parse(readFileSync(priceFileName));
+    if (
+      highest.pricePerLiter > highestPPL ||
+      lowest.pricePerLiter < lowestPPL
+    ) {
+      console.log(`📬 New prices found, writing e-mail`);
+      if (highest.pricePerLiter > highestPPL) {
+        appendFileSync(
+          mailFileName,
+          `[New highest price per liter: ${highest.pricePerLiter}](${productUrl(
+            highest
+          )})  
+`
+        );
+      }
+      if (lowest.pricePerLiter < lowestPPL) {
+        appendFileSync(
+          mailFileName,
+          `[New lowest price per liter: ${lowest.pricePerLiter}](${productUrl(
+            lowest
+          )})  
+`
+        );
+      }
+    } else {
+      console.log(`🚫 No new prices found`);
+    }
+  }
+
+  console.log(`💾 Saving highest and lowest prices in ${priceFileName}`);
+  writeFileSync(
+    priceFileName,
+    JSON.stringify({
+      highestPPL: highest.pricePerLiter,
+      lowestPPL: lowest.pricePerLiter,
+    })
   );
 })();

@@ -10,3 +10,6 @@
 #/.pnp.*
 
 /node_modules
+
+prices.json
+mail.md

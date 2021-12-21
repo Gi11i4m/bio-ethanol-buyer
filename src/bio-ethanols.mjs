@@ -2,7 +2,7 @@ import { brico, gamma } from "./providers.mjs";
 
 /**
  * @typedef {Object} BioEthanol
- * @property {BioEthanolProvider} provider
+ * @property {import('./providers.mjs').BioEthanolProvider} provider
  * @property {string} url
  * @property {number} amount
  */
@@ -30,3 +30,9 @@ export const bioEthanols = [
     amount: 1,
   },
 ];
+
+/**
+ * @param {BioEthanol} bioEthanol
+ * @returns {string} Product URL
+ */
+export const productUrl = ({ provider, url }) => `${provider.url}${url}`;

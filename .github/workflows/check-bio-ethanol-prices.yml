@@ -1,12 +1,37 @@
 name: check-bio-ethanol-prices
 on: [push]
 jobs:
-  check-bats-version:
+  check-bio-ethanol-prices:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: prices
       - uses: actions/setup-node@v2
         with:
           node-version: "14"
+
       - run: yarn
       - run: yarn start
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: prices
+          path: prices.json
+
+      - uses: andstor/file-existence-action@v1
+        with:
+          files: "mail.md"
+      - uses: dawidd6/action-send-mail@v3
+        if: steps.check_files.outputs.files_exists == 'true'
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: 🔥 New bio ethanol prices
+          to: gi11i4m@gmail.com
+          from: Bio-ethanol Buyer
+          html_body: file://mail.md
+          convert_markdown: true
