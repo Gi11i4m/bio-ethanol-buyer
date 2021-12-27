@@ -13,18 +13,24 @@ function metaPriceParser(html) {
 }
 
 /**
- * @typedef {Object} BioEthanolProvider
+ * @typedef {Object} Provider
  * @property {string} url
  * @property {Function} priceParser
  */
 
-/** @type BioEthanolProvider */
+/** @type Provider */
+export const EMPTY_PROVIDER = {
+  url: "https://emp.ty",
+  priceParser: () => {},
+};
+
+/** @type Provider */
 export const brico = {
   url: "https://www.brico.be/nl/",
   priceParser: metaPriceParser,
 };
 
-/** @type BioEthanolProvider */
+/** @type Provider */
 export const gamma = {
   url: "https://www.gamma.be/nl/",
   priceParser: metaPriceParser,
