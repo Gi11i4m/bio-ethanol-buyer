@@ -9,6 +9,13 @@ const STORAGE_URL = "https://jsonbin.org/gi11i4m";
  * @property {?Date} date
  */
 
+/** @type {Price} */
+const EMPTY_PRICE = {
+  highestPPL: 0,
+  lowestPPL: Infinity,
+  date: new Date(),
+};
+
 export class Storage {
   /** @param {string} auth */
   constructor(auth) {
@@ -44,6 +51,6 @@ export class Storage {
   }
 
   async initDb() {
-    return this.http.post("/bio-ethanol", { prices: [] });
+    return this.http.post("/bio-ethanol", { prices: [EMPTY_PRICE] });
   }
 }

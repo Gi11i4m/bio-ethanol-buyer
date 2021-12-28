@@ -36,11 +36,14 @@ await (async () => {
   const { highestPPL, lowestPPL } = savedPrices[savedPrices.length - 1] ||
     savedPrices[0] || { highestPPL: 0, lowestPPL: Infinity };
 
-  console.log(
-    highest.pricePerLiter > highestPPL || lowest.pricePerLiter < lowestPPL
-      ? `📬 New prices found, writing e-mail`
-      : `🚫 No new prices found`
-  );
+  if (
+    !(highest.pricePerLiter > highestPPL || lowest.pricePerLiter < lowestPPL)
+  ) {
+    console.log(`🚫 No new prices found`);
+    process.exit();
+  }
+
+  console.log(`📬 New prices found, writing e-mail`);
 
   if (highest.pricePerLiter > highestPPL) {
     mailWriter.append(
