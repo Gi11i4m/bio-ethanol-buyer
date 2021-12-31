@@ -40,7 +40,7 @@ await (async () => {
     !(highest.pricePerLiter > highestPPL || lowest.pricePerLiter < lowestPPL)
   ) {
     console.log(`🚫 No new prices found`);
-    process.exit();
+    process.exit(0);
   }
 
   console.log(`📬 New prices found, writing e-mail`);
