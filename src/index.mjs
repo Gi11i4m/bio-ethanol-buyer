@@ -37,7 +37,7 @@ await (async () => {
     savedPrices[0] || { highestPPL: 0, lowestPPL: Infinity };
 
   if (
-    !(highest.pricePerLiter > highestPPL || lowest.pricePerLiter < lowestPPL)
+    !(highest.pricePerLiter !== highestPPL || lowest.pricePerLiter !== lowestPPL)
   ) {
     console.log(`🚫 No new prices found`);
     process.exit(0);
@@ -45,16 +45,16 @@ await (async () => {
 
   console.log(`📬 New prices found, writing e-mail`);
 
-  if (highest.pricePerLiter > highestPPL) {
+  if (highest.pricePerLiter !== highestPPL) {
     mailWriter.append(
-      `[New highest price per liter: ${highest.pricePerLiter}](${productUrl(
+      `[Highest price per liter went from ${highestPPL} to ${highest.pricePerLiter}](${productUrl(
         highest
       )})`
     );
   }
-  if (lowest.pricePerLiter < lowestPPL) {
+  if (lowest.pricePerLiter !== lowestPPL) {
     mailWriter.append(
-      `[New lowest price per liter: ${lowest.pricePerLiter}](${productUrl(
+      `[Lowest price per liter went from ${lowestPPL} to ${lowest.pricePerLiter}](${productUrl(
         lowest
       )})`
     );
