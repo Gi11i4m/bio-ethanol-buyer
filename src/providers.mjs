@@ -1,7 +1,13 @@
+import { JSDOM } from "jsdom";
+
 /**
+ * @callback PriceParser
+ *
  * @param {string} html
  * @returns {number}
  */
+
+/** @type {PriceParser} */
 function metaPriceParser(html) {
   const {
     groups: { price },
@@ -12,25 +18,39 @@ function metaPriceParser(html) {
   return Number(price);
 }
 
+/** @type {PriceParser} */
+function windowProductDetailsFragmentInfoPriceParser(html) {
+  const {
+    window: {
+      __PRELOADED_STATE_productDetailsFragmentInfo__: {
+        productDetails: {
+          price: { value },
+        },
+      },
+    },
+  } = new JSDOM(html, { runScripts: "dangerously" });
+  return Number(value);
+}
+
 /**
  * @typedef {Object} Provider
  * @property {string} url
- * @property {Function} priceParser
+ * @property {PriceParser} priceParser
  */
 
-/** @type Provider */
+/** @type {Provider} */
 export const EMPTY_PROVIDER = {
   url: "https://emp.ty",
   priceParser: () => {},
 };
 
-/** @type Provider */
+/** @type {Provider} */
 export const brico = {
   url: "https://www.brico.be/nl/",
-  priceParser: metaPriceParser,
+  priceParser: windowProductDetailsFragmentInfoPriceParser,
 };
 
-/** @type Provider */
+/** @type {Provider} */
 export const gamma = {
   url: "https://www.gamma.be/nl/",
   priceParser: metaPriceParser,
