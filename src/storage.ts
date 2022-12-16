@@ -1,24 +1,27 @@
-import axios from "axios";
+import axios, { Axios } from "axios";
 
 const STORAGE_URL = "https://jsonbin.org/gi11i4m";
 
-/**
- * @typedef {Object} Price
- * @property {number} highestPPL
- * @property {number} lowestPPL
- * @property {?Date} date
- */
+interface Price {
+  highestPPL: number;
+  lowestPPL: number;
+  date: Date;
+}
 
-/** @type {Price} */
-const EMPTY_PRICE = {
+const EMPTY_PRICE: Price = {
   highestPPL: 0,
   lowestPPL: Infinity,
   date: new Date(),
 };
 
+interface StorageData {
+  prices: Price[];
+}
+
 export class Storage {
-  /** @param {string} auth */
-  constructor(auth) {
+  private http: Axios;
+
+  constructor(auth: string) {
     this.http = axios.create({
       baseURL: STORAGE_URL,
       validateStatus: (status) =>
@@ -28,22 +31,20 @@ export class Storage {
     this.http.defaults.headers.common["Content-Type'"] = "application/json";
   }
 
-  /** @returns {Promise<Price[]>} */
-  async getPrices() {
+  async getPrices(): Promise<Price[]> {
     if (!(await this.http.get("/bio-ethanol")).data.prices) {
       await this.initDb();
     }
     const {
       data: { prices },
-    } = await this.http.get("/bio-ethanol");
+    } = await this.http.get<StorageData>("/bio-ethanol");
     return prices.map(({ date, ...rest }) => ({
-      date: Date.parse(date),
+      date: new Date(date),
       ...rest,
     }));
   }
 
-  /** @param {Price} price */
-  async addPrice(price) {
+  async addPrice(price: Price) {
     const newPrices = {
       prices: [...(await this.getPrices()), { ...price, date: new Date() }],
     };

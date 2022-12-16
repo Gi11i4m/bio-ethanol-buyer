@@ -3,12 +3,9 @@ import { writeFileSync } from "fs";
 const MAIL_FILENAME = "mail.md";
 
 export class MailWriter {
-  constructor() {
-    this.mail = "";
-  }
+  constructor(private mail = "") {}
 
-  /** @param {string} text */
-  append(text) {
+  append(text: string) {
     this.mail += text + "\n";
   }
 
