@@ -86,8 +86,14 @@ const mailWriter = new MailWriter();
   }
   mailWriter.append(`\n📃 Other prices:\n`);
   mailWriter.append(
-    readableList(list)
-      .map((line) => `- ${line}`)
+    list
+      .map(
+        ({ provider, url, pricePerLiter, amount }) =>
+          `- [${providerName(provider)}](${productUrl({
+            provider,
+            url,
+          })}): €${pricePerLiter}/L (${amount}L)`
+      )
       .join("\n")
   );
   mailWriter.write();

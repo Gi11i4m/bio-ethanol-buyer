@@ -27,7 +27,7 @@ export class Storage {
       validateStatus: (status) =>
         (status >= 200 && status < 300) || status === 422, // 422 bug, see [here](https://laracasts.com/discuss/channels/laravel/422-unprocessable-entity-when-logging-out-using-axios-headers) ;
     });
-    this.http.defaults.headers.common["Authorization"] = auth;
+    this.http.defaults.headers.common["Authorization"] = `token ${auth}`;
     this.http.defaults.headers.common["Content-Type'"] = "application/json";
   }
 
