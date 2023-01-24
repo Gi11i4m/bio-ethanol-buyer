@@ -111,13 +111,22 @@ export class BioEthanolScraper {
   }
 
   async fetchBioEthanols(): Promise<void> {
-    const prices = await Promise.all(
+    const prices = await Promise.all<number>(
       BIO_ETHANOL_CONFIGS.map((bioEthanol) =>
         axios
           .get(productUrl(bioEthanol))
           .then(({ data }) => bioEthanol.provider.priceParser(data))
+          .catch((_) => {
+            console.error(
+              `Could not get price information for ${terminalLink(
+                providerName(bioEthanol.provider),
+                productUrl(bioEthanol)
+              )}`
+            );
+            return -1;
+          })
       )
-    );
+    ).then((prices) => prices.filter((price) => price < 0));
     this.bioEthanols = BIO_ETHANOL_CONFIGS.map(
       ({ provider, url, amount, ...rest }, index) => ({
         provider,
