@@ -37,13 +37,11 @@ const promoPriceParser: PriceParser = (html) => {
   );
 };
 
-const gtmProductDataParser: PriceParser = (html) =>
+const offersPriceParser: PriceParser = (html) =>
   Number(
-    JSON.parse(
-      html.match(/gtmProductData\s?=\s?(?<productData>{.*})/)!.groups![
-        "productData"
-      ]
-    ).price
+    Array.from(document.querySelectorAll(`script[type="application/ld+json"]`))
+      .map((el) => JSON.parse(el.innerHTML))
+      .filter(({ offers }) => !!offers?.price)[0]?.offers.price
   );
 
 export interface Provider {
@@ -73,7 +71,7 @@ export const bol: Provider = {
 
 export const hubo: Provider = {
   url: "https://www.hubo.be/nl/",
-  priceParser: gtmProductDataParser,
+  priceParser: offersPriceParser,
 };
 
 // TODO: https://www.bioethanolshop.nl/product-categorie/bioethanol/
