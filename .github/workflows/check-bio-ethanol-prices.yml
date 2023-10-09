@@ -13,6 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: asdf-vm/actions/install@v2
+      - run: pnpm install
 
       - run: pnpm start
         env:
