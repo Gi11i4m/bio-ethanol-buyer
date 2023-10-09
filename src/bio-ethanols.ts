@@ -126,7 +126,7 @@ export class BioEthanolScraper {
             return -1;
           })
       )
-    ).then((prices) => prices.filter((price) => price < 0));
+    );
     this.bioEthanols = BIO_ETHANOL_CONFIGS.map(
       ({ provider, url, amount, ...rest }, index) => ({
         provider,
@@ -136,7 +136,9 @@ export class BioEthanolScraper {
         price: prices[index],
         pricePerLiter: Math.round((prices[index] / amount) * 100) / 100,
       })
-    ).filter(({ pricePerLiter }) => !Number.isNaN(pricePerLiter));
+    ).filter(
+      ({ price, pricePerLiter }) => !price || !Number.isNaN(pricePerLiter)
+    );
   }
 
   get list() {
