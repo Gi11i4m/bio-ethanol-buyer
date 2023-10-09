@@ -7,7 +7,7 @@ const metaPriceParser: PriceParser = (html) => {
     .match(/<meta[^\/]*\/>/gm)!
     .filter((match) => match.includes('"price"'))[0]
     ?.match(/content="(?<price>.*)"/)!;
-  return Number(groups!["price"]);
+  return Number(groups!["price"].replace(",", "."));
 };
 
 const windowProductDetailsFragmentInfoPriceParser: PriceParser = (html) => {
@@ -23,7 +23,7 @@ const windowProductDetailsFragmentInfoPriceParser: PriceParser = (html) => {
     runScripts: "dangerously",
     virtualConsole: new VirtualConsole(),
   });
-  return Number(value);
+  return Number(value?.replace(",", "."));
 };
 
 const promoPriceParser: PriceParser = (html) => {
@@ -41,7 +41,8 @@ const offersPriceParser: PriceParser = (html) =>
   Number(
     Array.from(document.querySelectorAll(`script[type="application/ld+json"]`))
       .map((el) => JSON.parse(el.innerHTML))
-      .filter(({ offers }) => !!offers?.price)[0]?.offers.price,
+      .filter(({ offers }) => !!offers?.price)[0]
+      ?.offers.price.replace(",", "."),
   );
 
 const huboPriceParser: PriceParser = (html) => {
@@ -49,8 +50,9 @@ const huboPriceParser: PriceParser = (html) => {
     window: { document },
   } = new JSDOM(html);
   return Number(
-    document.querySelector(`[data-test='span[data-test="productLayoutPrice"]']`)
-      ?.textContent,
+    document
+      .querySelector('span[data-test="productLayoutPrice"]')
+      ?.textContent?.replace(",", "."),
   );
 };
 
@@ -79,7 +81,7 @@ export const EMPTY_PROVIDER: Provider = {
 
 export const brico: Provider = {
   url: "https://www.brico.be/nl/",
-  priceParser: windowProductDetailsFragmentInfoPriceParser,
+  priceParser: huboPriceParser,
 };
 
 export const gamma: Provider = {
