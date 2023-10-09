@@ -1,6 +1,14 @@
 import axios from "axios";
 import terminalLink from "terminal-link";
-import { bol, brico, EMPTY_PROVIDER, gamma, hubo, Provider } from "./providers";
+import {
+  bioEthanolShop,
+  bol,
+  brico,
+  EMPTY_PROVIDER,
+  gamma,
+  hubo,
+  Provider,
+} from "./providers";
 
 interface BioEthanol {
   provider: Provider;
@@ -81,6 +89,106 @@ const BIO_ETHANOL_CONFIGS: BioEthanolConfig[] = [
     url: "p/forever-bio-ethanol-5l/224302",
     amount: 5,
   },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-5-liter-96-6-premium-bio-ethanol-voor-sfeerhaarden-in-jerrycan/",
+    amount: 5,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-5-liter-96-6-premium-bioethanol-voor-sfeerhaarden-in-jerrycan-met-dopkraan/",
+    amount: 5,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/5-liter-bio-ethanol-bioethanol-100-zuivere-ethanol/",
+    amount: 5,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/bio-ethanol-10-liter-bioethanol-100-biobrandstof-in-jerrycan/",
+    amount: 10,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-bioethanol-1-liter-bio-ethanol-966-biobrandstof-in-literfles/",
+    amount: 1,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kynast-bio-ethanol-1-liter-bioethanol-966-biobrandstof-in-literfles/",
+    amount: 1,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kynast-bio-ethanol-6-liter-bioethanol-966-biobrandstof-in-literfles/",
+    amount: 6,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/10-liter-biofair-geproduceerde-bio-ethanol-966-geleverd-in-jerrycan/",
+    amount: 10,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-20-liter-100-bio-ethanol-gedenatureerde-bioethanol-in-2-jerrycans/",
+    amount: 20,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-bio-ethanol-12-liter-966-geurloos-biobrandstof-in-literfles-bioethanol-voor-sfeerhaard/",
+    amount: 12,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kynast-bio-ethanol-12-liter-bioethanol-966-biobrandstof-in-literfles/",
+    amount: 12,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/bio-ethanol-20-liter-bioethanol-966-biobrandstof-in-jerrycan/",
+    amount: 20,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-30-liter-100-bio-ethanol-gedenatureerde-bioethanol-in-3-jerrycans/",
+    amount: 30,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/bio-ethanol-30-liter-bioethanol-966-biobrandstof-in-jerrycan/",
+    amount: 30,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-60-liter-100-bio-ethanol-gedenatureerde-bioethanol-in-6-jerrycans/",
+    amount: 60,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-90-liter-100-bio-ethanol-gedenatureerde-bioethanol-in-9-jerrycans/",
+    amount: 90,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/kieselgreen-120-liter-100-bio-ethanol-gedenatureerde-bioethanol-in-12-jerrycans/",
+    amount: 120,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/bio-ethanol-60-liter-bioethanol-966-biobrandstof-in-jerrycan/",
+    amount: 60,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/bio-ethanol-90-liter-bioethanol-966-biobrandstof-in-jerrycan/",
+    amount: 90,
+  },
+  {
+    provider: bioEthanolShop,
+    url: "product/bio-ethanol-120-liter-bioethanol-966-biobrandstof-in-jerrycan/",
+    amount: 120,
+  },
 ];
 
 export const productUrl = ({
@@ -136,10 +244,7 @@ export class BioEthanolScraper {
         price: prices[index],
         pricePerLiter: Math.round((prices[index] / amount) * 100) / 100,
       }),
-    )
-      .filter(
-        ({ price, pricePerLiter }) => price || pricePerLiter,
-      );
+    ).filter(({ price, pricePerLiter }) => price || pricePerLiter);
   }
 
   get list() {

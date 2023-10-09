@@ -33,7 +33,7 @@ const promoPriceParser: PriceParser = (html) => {
   return Number(
     document
       .querySelector(`[data-test='buy-block-sticky-cta-price']`)
-      ?.innerHTML.replace(",", ".")
+      ?.innerHTML.replace(",", "."),
   );
 };
 
@@ -41,18 +41,30 @@ const offersPriceParser: PriceParser = (html) =>
   Number(
     Array.from(document.querySelectorAll(`script[type="application/ld+json"]`))
       .map((el) => JSON.parse(el.innerHTML))
-      .filter(({ offers }) => !!offers?.price)[0]?.offers.price
+      .filter(({ offers }) => !!offers?.price)[0]?.offers.price,
   );
 
 const huboPriceParser: PriceParser = (html) => {
-    const {
-        window: { document },
-    } = new JSDOM(html);
-    return Number(
-        document
-            .querySelector(`[data-test='span[data-test="productLayoutPrice"]']`)
-            ?.textContent
-    );
+  const {
+    window: { document },
+  } = new JSDOM(html);
+  return Number(
+    document.querySelector(`[data-test='span[data-test="productLayoutPrice"]']`)
+      ?.textContent,
+  );
+};
+
+const bioEthanolShopPriceParser: PriceParser = (html) => {
+  const {
+    window: { document },
+  } = new JSDOM(html);
+  return Number(
+    document
+      .querySelector(`*[data-widget_type="wd_single_product_price.default"]`)
+      ?.textContent?.trim()
+      ?.replace("€", "")
+      ?.replace(",", "."),
+  );
 };
 
 export interface Provider {
@@ -85,6 +97,7 @@ export const hubo: Provider = {
   priceParser: huboPriceParser,
 };
 
-// TODO: https://www.bioethanolshop.nl/product-categorie/bioethanol/
-
-// TODO (if possible): https://www.werkenmetmerken.be/nl/bio-ethanol_99_/p/23122/#38808
+export const bioEthanolShop: Provider = {
+  url: "https://www.bioethanolshop.nl/",
+  priceParser: bioEthanolShopPriceParser,
+};
