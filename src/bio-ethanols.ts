@@ -99,8 +99,8 @@ export const readableList = (bioEthanols: BioEthanol[]) =>
     ({ provider, amount, pricePerLiter, url }) =>
       `${terminalLink(
         providerName(provider),
-        productUrl({ provider, url })
-      )}: €${pricePerLiter}/L (${amount}L)`
+        productUrl({ provider, url }),
+      )}: €${pricePerLiter}/L (${amount}L)`,
   );
 
 export class BioEthanolScraper {
@@ -120,12 +120,12 @@ export class BioEthanolScraper {
             console.error(
               `Could not get price information for ${terminalLink(
                 providerName(bioEthanol.provider),
-                productUrl(bioEthanol)
-              )}`
+                productUrl(bioEthanol),
+              )}`,
             );
             return -1;
-          })
-      )
+          }),
+      ),
     );
     this.bioEthanols = BIO_ETHANOL_CONFIGS.map(
       ({ provider, url, amount, ...rest }, index) => ({
@@ -135,29 +135,30 @@ export class BioEthanolScraper {
         ...rest,
         price: prices[index],
         pricePerLiter: Math.round((prices[index] / amount) * 100) / 100,
-      })
-    ).filter(
-      ({ price, pricePerLiter }) => !price || !Number.isNaN(pricePerLiter)
-    );
+      }),
+    )
+      .filter(
+        ({ price, pricePerLiter }) => price || pricePerLiter,
+      );
   }
 
   get list() {
     return this.bioEthanols.sort(
-      (bio1, bio2) => bio1.pricePerLiter - bio2.pricePerLiter
+      (bio1, bio2) => bio1.pricePerLiter - bio2.pricePerLiter,
     );
   }
 
   get mostExpensive() {
     return this.bioEthanols.reduce(
       (acc, curr) => (curr.pricePerLiter > acc.pricePerLiter ? curr : acc),
-      EMPTY_BIO_ETHANOL
+      EMPTY_BIO_ETHANOL,
     );
   }
 
   get cheapest() {
     return this.bioEthanols.reduce(
       (acc, curr) => (curr.pricePerLiter < acc.pricePerLiter ? curr : acc),
-      { ...EMPTY_BIO_ETHANOL, pricePerLiter: Infinity }
+      { ...EMPTY_BIO_ETHANOL, pricePerLiter: Infinity },
     );
   }
 }
