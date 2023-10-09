@@ -7,11 +7,12 @@ Written in TypeScript, run daily by GitHub Actions.
 ### Install dependencies
 
 ```bash
-npm install
+asdf install
+pnpm install
 ```
 
 ### Run
 
 ```bash
-npm start
+pnpm start
 ```

@@ -11,17 +11,14 @@ jobs:
   check-bio-ethanol-prices:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "18"
+      - uses: actions/checkout@v4
+      - uses: asdf-vm/actions/install@v2
 
-      - run: npm install
-      - run: npm start
+      - run: pnpm start
         env:
           JSONBIN_AUTH: ${{ secrets.JSONBIN_AUTH }}
 
-      - uses: andstor/file-existence-action@v1
+      - uses: andstor/file-existence-action@v2
         id: check_files
         with:
           files: "mail.md"

@@ -78,7 +78,7 @@ const BIO_ETHANOL_CONFIGS: BioEthanolConfig[] = [
   },
   {
     provider: hubo,
-    url: "p/forever-bio-ethanol-5l/224302.html",
+    url: "p/forever-bio-ethanol-5l/224302",
     amount: 5,
   },
 ];

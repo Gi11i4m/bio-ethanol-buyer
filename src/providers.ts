@@ -46,6 +46,17 @@ const gtmProductDataParser: PriceParser = (html) =>
     ).price
   );
 
+const huboPriceParser: PriceParser = (html) => {
+    const {
+        window: { document },
+    } = new JSDOM(html);
+    return Number(
+        document
+            .querySelector(`[data-test='span[data-test="productLayoutPrice"]']`)
+            ?.textContent
+    );
+};
+
 export interface Provider {
   url: string;
   priceParser: PriceParser;
@@ -73,7 +84,7 @@ export const bol: Provider = {
 
 export const hubo: Provider = {
   url: "https://www.hubo.be/nl/",
-  priceParser: gtmProductDataParser,
+  priceParser: huboPriceParser,
 };
 
 // TODO: https://www.bioethanolshop.nl/product-categorie/bioethanol/
