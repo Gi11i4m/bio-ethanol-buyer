@@ -6,6 +6,6 @@ export const readableList = (products: ProductData[]) =>
     (productData) =>
       `${terminalLink(
         productData.product.provider.name,
-        productData.product.url.toString(),
+        productData.product.urlEncoded,
       )}: €${productData.pricePerLiter}/L (${productData.product.amount}L)`,
   );

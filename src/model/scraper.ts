@@ -17,13 +17,13 @@ export class Scraper {
     const prices = await Promise.all<number>(
       this.products.map((product) =>
         axios
-          .get(product.url.toString())
+          .get(product.urlEncoded)
           .then(({ data }) => product.provider.priceParser.getPrice(data))
           .catch((_) => {
             console.error(
               `Could not get price information for ${terminalLink(
                 product.provider.name,
-                product.url.toString(),
+                product.urlEncoded,
               )}`,
             );
             return -1;

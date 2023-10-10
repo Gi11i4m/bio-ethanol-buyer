@@ -10,4 +10,8 @@ export class Product {
   get url() {
     return new URL(this.provider.url.href + this.path);
   }
+
+  get urlEncoded() {
+    return encodeURI(this.url.toString());
+  }
 }

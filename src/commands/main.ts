@@ -29,7 +29,7 @@ export async function main(args: Args) {
         mostExpensive.pricePerLiter
       } at ${terminalLink(
         mostExpensive.product.provider.name,
-        mostExpensive.product.url.toString(),
+        mostExpensive.product.urlEncoded,
       )}`,
     ),
   );
@@ -40,7 +40,7 @@ export async function main(args: Args) {
         cheapest.pricePerLiter
       } at ${terminalLink(
         cheapest.product.provider.name,
-        cheapest.product.url.toString(),
+        cheapest.product.urlEncoded,
       )}`,
     ),
   );
@@ -92,7 +92,7 @@ export async function main(args: Args) {
       list
         .map(
           (product) =>
-            `- [${product.product.provider.name}](${product.product.url}): €${product.pricePerLiter}/L (${product.product.amount}L)`,
+            `- [${product.product.provider.name}](${product.product.urlEncoded}): €${product.pricePerLiter}/L (${product.product.amount}L)`,
         )
         .join("\n"),
     );
