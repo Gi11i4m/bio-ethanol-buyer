@@ -3,7 +3,7 @@ import { hideBin } from "yargs/helpers";
 import { main } from "./commands/main";
 
 export interface Args {
-  jsbinAuth: string;
+  jsonbinAuth: string;
   ci: boolean;
   sendMail: boolean;
 }
@@ -11,10 +11,10 @@ export interface Args {
 yargs(hideBin(process.argv))
   .env()
   .options({
-    jsbinAuth: {
+    jsonbinAuth: {
       demandOption: false,
       type: "string",
-      describe: "Auth key for JSBIN",
+      describe: "Auth key for JSONBIN",
     },
     ci: {
       demandOption: false,

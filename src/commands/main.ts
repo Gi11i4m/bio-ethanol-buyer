@@ -9,7 +9,7 @@ import { Args } from "../index";
 
 export async function main(args: Args) {
   const scraper = new Scraper(PRODUCTS);
-  const storage = new Storage(args.jsbinAuth);
+  const storage = new Storage(args.jsonbinAuth);
   const mailWriter = new MailWriter();
 
   console.log(
@@ -51,8 +51,8 @@ export async function main(args: Args) {
     )}`,
   );
 
-  if (!args.jsbinAuth) {
-    console.log("🔑 No JSBIN auth key found, exiting...");
+  if (!args.jsonbinAuth) {
+    console.log("🔑 No JSONBIN auth key found, exiting...");
     process.exit(0);
   }
 
