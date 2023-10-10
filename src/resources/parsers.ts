@@ -1,8 +1,10 @@
 import { JSDOM, VirtualConsole } from "jsdom";
-import { PriceParser } from "./price.parser";
+import { PriceParser } from "../model/price.parser";
+
+export const infinityPriceParser = new PriceParser((_) => Infinity.toString());
 
 export const metaPriceParser = new PriceParser(
-  (html) =>
+  (html: string) =>
     html
       .match(/<meta[^\/]*\/>/gm)!
       .filter((match) => match.includes('"price"'))[0]
@@ -10,7 +12,7 @@ export const metaPriceParser = new PriceParser(
 );
 
 export const windowProductDetailsFragmentInfoPriceParser = new PriceParser(
-  (html) =>
+  (html: string) =>
     new JSDOM(html, {
       runScripts: "dangerously",
       virtualConsole: new VirtualConsole(),
@@ -19,29 +21,29 @@ export const windowProductDetailsFragmentInfoPriceParser = new PriceParser(
 );
 
 export const promoPriceParser = new PriceParser(
-  (html) =>
+  (html: string) =>
     new JSDOM(html).window.document.querySelector(
       `[data-test='buy-block-sticky-cta-price']`,
-    )?.innerHTML,
+    )?.innerHTML || "",
 );
 
 export const offersPriceParser = new PriceParser(
-  (html) =>
+  (html: string) =>
     Array.from(document.querySelectorAll(`script[type="application/ld+json"]`))
       .map((el) => JSON.parse(el.innerHTML))
       .filter(({ offers }) => !!offers?.price)[0]?.offers.price,
 );
 
 export const huboPriceParser = new PriceParser(
-  (html) =>
+  (html: string) =>
     new JSDOM(html).window.document.querySelector(
       'span[data-test="productLayoutPrice"]',
-    )?.textContent,
+    )?.textContent || "",
 );
 
 export const bioEthanolShopPriceParser = new PriceParser(
-  (html) =>
+  (html: string) =>
     new JSDOM(html).window.document
       .querySelector(`*[data-widget_type="wd_single_product_price.default"]`)
-      ?.textContent?.trim(),
+      ?.textContent?.trim() || "",
 );

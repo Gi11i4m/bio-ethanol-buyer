@@ -2,12 +2,12 @@ import { Provider } from "./provider";
 
 export class Product {
   constructor(
-    private provider: Provider,
-    private url: string,
-    private amount: number,
+    public readonly provider: Provider,
+    private path: string,
+    public readonly amount: number,
   ) {}
 
   get url() {
-    return new URL(`${this.provider.url}${this.url}`);
+    return new URL(this.provider.url.href + this.path);
   }
 }

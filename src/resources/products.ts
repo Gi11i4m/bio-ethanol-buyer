@@ -1,15 +1,27 @@
-import { bioEthanolShop, bol, brico, gamma, hubo, Provider } from "./providers";
+import {
+  bioEthanolShop,
+  bol,
+  brico,
+  EMPTY_PROVIDER,
+  gamma,
+  hubo,
+} from "./providers";
 import { Product } from "../model/product";
+import { ProductData } from "../model/product.data";
+
+export const EMPTY_PRODUCT = new Product(EMPTY_PROVIDER, "/", 0);
+
+export const EMPTY_PRODUCT_DATA = new ProductData(EMPTY_PRODUCT, 0, 0);
 
 export const PRODUCTS: Product[] = [
   new Product(
     brico,
-    "badkamer-keuken-wonen/verwarming/brandstoffen/forever-bio-ethanol-20l/5254577",
+    "/badkamer-keuken-wonen/verwarming/brandstoffen/forever-bio-ethanol-20l/5254577",
     20,
   ),
   new Product(
     brico,
-    "badkamer-keuken-wonen/verwarming/brandstoffen/forever-bio-ethanol-5l/5131316",
+    "/badkamer-keuken-wonen/verwarming/brandstoffen/forever-bio-ethanol-5l/5131316",
     5,
   ),
   new Product(gamma, "assortiment/livin-flame-bio-ethanol-5-l/p/B391275", 5),

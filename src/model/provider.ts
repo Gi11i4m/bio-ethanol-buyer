@@ -1,17 +1,17 @@
-import { PriceParser } from "./price-parser";
+import { PriceParser } from "./price.parser";
 
 export class Provider {
   constructor(
-    private url: string,
-    private priceParser: PriceParser,
+    private _url: string,
+    public readonly priceParser: PriceParser,
   ) {}
 
   get url() {
-    return new URL(this.url);
+    return new URL(this._url);
   }
 
   get name() {
-    const name = this.url.split(".")[1] || "";
+    const name = this._url.split(".")[1] || "";
     const firstLetter = name.charAt(0) || "";
     return `${firstLetter.toUpperCase()}${name.substring(1)}`;
   }

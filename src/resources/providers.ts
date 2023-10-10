@@ -1,8 +1,15 @@
-import { huboPriceParser, metaPriceParser } from "./parsers";
-import { Provider } from "./provider";
+import {
+  bioEthanolShopPriceParser,
+  huboPriceParser,
+  infinityPriceParser,
+  metaPriceParser,
+  promoPriceParser,
+} from "./parsers";
+import { Provider } from "../model/provider";
 
-export const EMPTY_PROVIDER = new Provider("https://emp.ty", (_) =>
-  Infinity.toString(),
+export const EMPTY_PROVIDER = new Provider(
+  "https://emp.ty",
+  infinityPriceParser,
 );
 export const brico = new Provider("https://www.brico.be/nl/", huboPriceParser);
 export const gamma = new Provider("https://www.gamma.be/nl/", metaPriceParser);

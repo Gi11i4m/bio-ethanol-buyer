@@ -1,82 +1,64 @@
 import axios from "axios";
 import terminalLink from "terminal-link";
-import { productUrl, providerName } from "./model/bio-ethanols";
-import { EMPTY_PROVIDER, Provider } from "./model/providers";
-
-const EMPTY_BIO_ETHANOL: BioEthanol = {
-  provider: EMPTY_PROVIDER,
-  url: "/placeholder",
-  amount: 0,
-  price: 0,
-  pricePerLiter: 0,
-};
-
-export type BioEthanolConfig = {
-  provider: Provider;
-  url: string;
-  amount: number;
-};
-
-export type BioEthanol = BioEthanolConfig & {
-  price: number;
-  pricePerLiter: number;
-};
+import { ProductData } from "./product.data";
+import { Product } from "./product";
+import { EMPTY_PRODUCT, EMPTY_PRODUCT_DATA } from "../resources/products";
 
 export class Scraper {
-  private bioEthanols: BioEthanol[] = [];
+  private productData: ProductData[] = [];
 
-  constructor(private bioEthanolConfigs: BioEthanolConfig[]) {}
+  constructor(private products: Product[]) {}
 
   get numberOfSources() {
-    return this.bioEthanolConfigs.length;
+    return this.products.length;
   }
 
   async fetchBioEthanols(): Promise<void> {
     const prices = await Promise.all<number>(
-      this.bioEthanolConfigs.map((bioEthanol) =>
+      this.products.map((product) =>
         axios
-          .get(productUrl(bioEthanol))
-          .then(({ data }) => bioEthanol.provider.priceParser(data))
+          .get(product.url.toString())
+          .then(({ data }) => product.provider.priceParser.getPrice(data))
           .catch((_) => {
             console.error(
               `Could not get price information for ${terminalLink(
-                providerName(bioEthanol.provider),
-                productUrl(bioEthanol),
+                product.provider.name,
+                product.url.toString(),
               )}`,
             );
             return -1;
           }),
       ),
     );
-    this.bioEthanols = this.bioEthanolConfigs
-      .map(({ provider, url, amount, ...rest }, index) => ({
-        provider,
-        url,
-        amount,
-        ...rest,
-        price: prices[index],
-        pricePerLiter: Math.round((prices[index] / amount) * 100) / 100,
-      }))
-      .filter(({ price, pricePerLiter }) => price || pricePerLiter);
+    this.productData = this.products
+      .map(
+        (product, index) =>
+          new ProductData(
+            product,
+            prices[index],
+            Math.round((prices[index] / product.amount) * 100) / 100,
+          ),
+      )
+      .filter((product) => product.hasPrice);
   }
 
   get list() {
-    return this.bioEthanols.sort(
+    return this.productData.sort(
       (bio1, bio2) => bio1.pricePerLiter - bio2.pricePerLiter,
     );
   }
 
   get mostExpensive() {
-    return this.bioEthanols.reduce(
+    return this.productData.reduce(
       (acc, curr) => (curr.pricePerLiter > acc.pricePerLiter ? curr : acc),
-      EMPTY_BIO_ETHANOL,
+      EMPTY_PRODUCT_DATA,
     );
   }
 
   get cheapest() {
-    return this.bioEthanols.reduce(
+    return this.productData.reduce(
       (acc, curr) => (curr.pricePerLiter < acc.pricePerLiter ? curr : acc),
-      { ...EMPTY_BIO_ETHANOL, pricePerLiter: Infinity },
+      new ProductData(EMPTY_PRODUCT, Infinity, Infinity),
     );
   }
 }
