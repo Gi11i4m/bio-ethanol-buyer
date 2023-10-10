@@ -6,6 +6,8 @@ export interface Args {
   jsonbinAuth: string;
   ci: boolean;
   sendMail: boolean;
+  mailUsername: string;
+  mailPassword: string;
 }
 
 yargs(hideBin(process.argv))
@@ -27,6 +29,16 @@ yargs(hideBin(process.argv))
       type: "boolean",
       describe: "Weather or not to write a file to e-mail",
       default: true,
+    },
+    mailUsername: {
+      demandOption: false,
+      type: "string",
+      describe: "Mail server username",
+    },
+    mailPassword: {
+      demandOption: false,
+      type: "string",
+      describe: "Mail server password",
     },
   })
   .command(
