@@ -10,17 +10,20 @@ import {
 import { MailWriter } from "./mail-writer";
 import { Storage } from "./storage";
 
+// TODO: use node 20
 dotenv.config();
 
-const bioEthanolScraper = new BioEthanolScraper();
+const bioEthanolScraper = new BioEthanolScraper(BIO_ETHANOL);
+
+// TODO: use yargs
 const storage = new Storage(process.env.JSONBIN_AUTH!);
 const mailWriter = new MailWriter();
 
 (async () => {
   console.log(
     chalk.yellow(
-      `🔥 Scraping bio-ethanol prices from ${bioEthanolScraper.numberOfSources} sources...`
-    )
+      `🔥 Scraping bio-ethanol prices from ${bioEthanolScraper.numberOfSources} sources...`,
+    ),
   );
 
   await bioEthanolScraper.fetchBioEthanols();
@@ -34,23 +37,26 @@ const mailWriter = new MailWriter();
     chalk.bold.red(
       `\n📈 Highest price per liter is ${
         highest.pricePerLiter
-      } at ${terminalLink(providerName(highest.provider), productUrl(highest))}`
-    )
+      } at ${terminalLink(
+        providerName(highest.provider),
+        productUrl(highest),
+      )}`,
+    ),
   );
 
   console.log(
     chalk.bold.green(
       `\n📉 Lowest price per liter is ${lowest.pricePerLiter} at ${terminalLink(
         providerName(lowest.provider),
-        productUrl(lowest)
-      )}`
-    )
+        productUrl(lowest),
+      )}`,
+    ),
   );
 
   console.log(
     `\n📃 Other prices from cheap to expensive: \n${chalk.bold.blueBright(
-      readableList(list).join("\n")
-    )}`
+      readableList(list).join("\n"),
+    )}`,
   );
 
   const savedPrices = await storage.getPrices();
@@ -74,14 +80,14 @@ const mailWriter = new MailWriter();
     mailWriter.append(
       `📈 Highest price per liter went from ${highestPPL} to ${
         highest.pricePerLiter
-      } at [${providerName(highest.provider)}](${productUrl(highest)})\n`
+      } at [${providerName(highest.provider)}](${productUrl(highest)})\n`,
     );
   }
   if (lowest.pricePerLiter !== lowestPPL) {
     mailWriter.append(
       `📉 Lowest price per liter went from ${lowestPPL} to ${
         lowest.pricePerLiter
-      } at [${providerName(lowest.provider)}](${productUrl(lowest)})\n`
+      } at [${providerName(lowest.provider)}](${productUrl(lowest)})\n`,
     );
   }
   mailWriter.append(`\n📃 Other prices:\n`);
@@ -92,9 +98,9 @@ const mailWriter = new MailWriter();
           `- [${providerName(provider)}](${productUrl({
             provider,
             url,
-          })}): €${pricePerLiter}/L (${amount}L)`
+          })}): €${pricePerLiter}/L (${amount}L)`,
       )
-      .join("\n")
+      .join("\n"),
   );
   mailWriter.write();
 
