@@ -8,6 +8,6 @@ export class ProductData {
   ) {}
 
   get hasPrice() {
-    return !!this.price && !!this.pricePerLiter;
+    return !!this.price && !!this.pricePerLiter && this.pricePerLiter > 0;
   }
 }
