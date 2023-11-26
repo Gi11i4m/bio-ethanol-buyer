@@ -64,6 +64,11 @@ export const PRODUCTS: Product[] = [
   new Product(hubo, "p/forever-bio-ethanol-5l/224302", 5),
   new Product(
     bioEthanolShop,
+    "product/kieselgreen-bio-ethanol-24-liter-966-biobrandstof-in-literfles",
+    24,
+  ),
+  new Product(
+    bioEthanolShop,
     "product/kieselgreen-5-liter-96-6-premium-bio-ethanol-voor-sfeerhaarden-in-jerrycan/",
     5,
   ),
