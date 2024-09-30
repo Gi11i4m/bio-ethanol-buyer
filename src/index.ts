@@ -4,6 +4,8 @@ import { main } from "./commands/main";
 
 export interface Args {
   jsonbinAuth: string;
+  notionAuth: string;
+  notionDbId: string;
   ci: boolean;
   sendMail: boolean;
   mailUsername: string;
@@ -13,6 +15,16 @@ export interface Args {
 yargs(hideBin(process.argv))
   .env()
   .options({
+    notionToken: {
+      demandOption: false,
+      type: "string",
+      describe: "Auth key for NOTION",
+    },
+    notionDbId: {
+      demandOption: false,
+      type: "string",
+      describe: "Notion DB id to use",
+    },
     jsonbinAuth: {
       demandOption: false,
       type: "string",

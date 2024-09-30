@@ -9,7 +9,11 @@ import { Args } from "../index";
 
 export async function main(args: Args) {
   const scraper = new Scraper(PRODUCTS);
-  const storage = new Storage(args.jsonbinAuth);
+  const storage = new Storage({
+    jsonbinAuth: args.jsonbinAuth,
+    notionAuth: args.notionAuth,
+    notionDbId: args.notionDbId,
+  });
   const mailWriter = new MailWriter();
 
   console.log(
@@ -50,6 +54,10 @@ export async function main(args: Args) {
       readableList(list).join("\n"),
     )}`,
   );
+
+  console.log(`💾 Saving new prices`);
+
+  await storage.savePrices(scraper.list);
 
   if (!args.jsonbinAuth) {
     console.log("🔑 No JSONBIN auth key found, exiting...");
