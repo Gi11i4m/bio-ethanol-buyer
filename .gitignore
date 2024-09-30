@@ -13,3 +13,5 @@
 
 .env
 mail.md
+
+/http-client.private.env.json
