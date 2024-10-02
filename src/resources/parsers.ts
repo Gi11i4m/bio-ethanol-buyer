@@ -23,7 +23,7 @@ export const windowProductDetailsFragmentInfoPriceParser = new PriceParser(
 export const promoPriceParser = new PriceParser(
   (html: string) =>
     new JSDOM(html).window.document.querySelector(
-      `[data-test='buy-block-sticky-cta-price']`,
+      "[data-test='buy-block-sticky-cta-price']",
     )?.innerHTML || "",
 );
 

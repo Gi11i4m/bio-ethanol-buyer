@@ -3,7 +3,6 @@ import { hideBin } from "yargs/helpers";
 import { main } from "./commands/main";
 
 export interface Args {
-  jsonbinAuth: string;
   notionAuth: string;
   notionDbId: string;
   ci: boolean;
@@ -25,21 +24,16 @@ yargs(hideBin(process.argv))
       type: "string",
       describe: "Notion DB id to use",
     },
-    jsonbinAuth: {
-      demandOption: false,
-      type: "string",
-      describe: "Auth key for JSONBIN",
-    },
     ci: {
       demandOption: false,
       type: "boolean",
-      describe: "Weather or not we're running on CI",
+      describe: "Wether or not we're running on CI",
       default: false,
     },
     sendMail: {
       demandOption: false,
       type: "boolean",
-      describe: "Weather or not to write a file to e-mail",
+      describe: "Wether or not to write a file to e-mail",
       default: true,
     },
     mailUsername: {

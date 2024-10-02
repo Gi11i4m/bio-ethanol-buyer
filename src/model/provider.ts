@@ -4,6 +4,7 @@ export class Provider {
   constructor(
     private _url: string,
     public readonly priceParser: PriceParser,
+    public readonly priceQuerySelector: string,
   ) {}
 
   get url() {

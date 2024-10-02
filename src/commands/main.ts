@@ -8,12 +8,14 @@ import { readableList } from "../util/console";
 import { Args } from "../index";
 
 export async function main(args: Args) {
-  const scraper = new Scraper(PRODUCTS);
   const storage = new Storage({
-    jsonbinAuth: args.jsonbinAuth,
     notionAuth: args.notionAuth,
     notionDbId: args.notionDbId,
   });
+
+  const prices = await storage.getPrices();
+  // const products: Product[] = prices.map(({}) => new Product(new Provider(), ))
+  const scraper = new Scraper(PRODUCTS);
   const mailWriter = new MailWriter();
 
   console.log(
@@ -55,20 +57,16 @@ export async function main(args: Args) {
     )}`,
   );
 
-  console.log(`💾 Saving new prices`);
-
-  await storage.savePrices(scraper.list);
-
-  if (!args.jsonbinAuth) {
-    console.log("🔑 No JSONBIN auth key found, exiting...");
-    process.exit(0);
-  }
-
   const savedPrices = await storage.getPrices();
+  console.log(savedPrices);
+
+  console.log(`💾 Saving new prices`);
+  await storage.updatePrices(scraper.list);
 
   console.log(`♻️ Comparing to previous prices`);
-  const { highestPPL, lowestPPL } = savedPrices[savedPrices.length - 1] ||
-    savedPrices[0] || { highestPPL: 0, lowestPPL: Infinity };
+  // TODO: compare
+  const highestPPL = 0;
+  const lowestPPL = 0;
 
   if (
     !(
@@ -105,14 +103,5 @@ export async function main(args: Args) {
         .join("\n"),
     );
     mailWriter.write();
-  }
-  if (args.ci) {
-    console.log(`💾 Saving new prices`);
-
-    await storage.addPrice({
-      date: new Date(),
-      highestPPL: mostExpensive.pricePerLiter,
-      lowestPPL: cheapest.pricePerLiter,
-    });
   }
 }
