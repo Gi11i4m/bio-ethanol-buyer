@@ -1,4 +1,3 @@
-import { ProductData } from "../model/product.data";
 import { Notion } from "./notion";
 
 export interface StorageConfig {
@@ -9,9 +8,10 @@ export interface StorageConfig {
 export type Row = {
   url: string;
   name: string;
-  pricePerLiter: number;
   amount: number;
   priceQuerySelector: string;
+  pricePerLiter: number;
+  status: string;
 };
 export type RowValue = Row[keyof Row];
 
@@ -22,21 +22,12 @@ export class Storage {
     this.notion = new Notion(notionAuth, notionDbId);
   }
 
-  async getPrices(): Promise<Record<keyof Row, RowValue>[]> {
-    return await this.notion.getRows<keyof Row, RowValue>();
+  async getPrices(): Promise<Row[]> {
+    return await this.notion.getRows<Row>();
   }
 
-  async updatePrices(prices: ProductData[]) {
-    for (const price of prices)
-      await this.notion.updateRow<keyof Row, RowValue>(
-        {
-          url: price.product.url.href,
-          name: price.product.provider.name,
-          pricePerLiter: price.pricePerLiter,
-          amount: price.product.amount,
-          priceQuerySelector: price.product.provider.priceQuerySelector,
-        },
-        "name",
-      );
+  async updatePrices(rows: Row[]) {
+    for (const row of rows)
+      await this.notion.updateRow<keyof Row, RowValue>(row, "url");
   }
 }

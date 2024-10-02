@@ -1,64 +1,70 @@
 import axios from "axios";
 import terminalLink from "terminal-link";
-import { ProductData } from "./product.data";
-import { Product } from "./product";
-import { EMPTY_PRODUCT, EMPTY_PRODUCT_DATA } from "../resources/products";
+import { Row } from "../adapter/storage";
+import { maxBy, minBy } from "lodash";
+import { JSDOM } from "jsdom";
 
 export class Scraper {
-  private productData: ProductData[] = [];
+  constructor(public rows: Row[]) {}
 
-  constructor(private products: Product[]) {}
-
-  get numberOfSources() {
-    return this.products.length;
-  }
-
-  async fetchBioEthanols(): Promise<void> {
-    const prices = await Promise.all<number>(
-      this.products.map((product) =>
+  async scrapeBioEthanolPrices(): Promise<void> {
+    this.rows = await Promise.all(
+      this.rows.map((row) =>
         axios
-          .get(product.urlEncoded)
-          .then(({ data }) => product.provider.priceParser.getPrice(data))
+          .get(row.url)
+          .then(({ data }) => {
+            const dom = new JSDOM(data);
+            const stringPrice = eval(
+              `dom.window.document.${row.priceQuerySelector}`,
+            )
+              .trim()
+              .replace(",", ".")
+              .replace("€", "");
+            const pricePerLiter =
+              Math.round((Number(stringPrice) / row.amount) * 100) / 100;
+            return {
+              ...row,
+              pricePerLiter,
+              status:
+                row.pricePerLiter === pricePerLiter
+                  ? "🟰"
+                  : row.pricePerLiter > pricePerLiter
+                  ? "📉"
+                  : "📈",
+            };
+          })
           .catch((_) => {
             console.error(
               `Could not get price information for ${terminalLink(
-                product.provider.name,
-                product.urlEncoded,
+                row.name,
+                row.url,
               )}`,
             );
-            return -1;
+            return { ...row, pricePerLiter: 0, status: "❌" };
           }),
       ),
     );
-    this.productData = this.products
-      .map(
-        (product, index) =>
-          new ProductData(
-            product,
-            prices[index],
-            Math.round((prices[index] / product.amount) * 100) / 100,
-          ),
-      )
-      .filter((product) => product.hasPrice);
+  }
+
+  get numberOfSources() {
+    return this.rows.length;
+  }
+
+  get nonEmptyRows() {
+    return this.rows.filter(({ pricePerLiter }) => pricePerLiter !== 0);
   }
 
   get list() {
-    return this.productData.sort(
+    return this.nonEmptyRows.sort(
       (bio1, bio2) => bio1.pricePerLiter - bio2.pricePerLiter,
     );
   }
 
   get mostExpensive() {
-    return this.productData.reduce(
-      (acc, curr) => (curr.pricePerLiter > acc.pricePerLiter ? curr : acc),
-      EMPTY_PRODUCT_DATA,
-    );
+    return maxBy(this.nonEmptyRows, (r) => r.pricePerLiter);
   }
 
   get cheapest() {
-    return this.productData.reduce(
-      (acc, curr) => (curr.pricePerLiter < acc.pricePerLiter ? curr : acc),
-      new ProductData(EMPTY_PRODUCT, Infinity, Infinity),
-    );
+    return minBy(this.nonEmptyRows, (r) => r.pricePerLiter);
   }
 }

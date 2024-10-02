@@ -1,13 +1,13 @@
 import terminalLink from "terminal-link";
 import { ProductData } from "../model/product.data";
+import { Row } from "../adapter/storage";
 
-export const readableList = (products: ProductData[]) =>
+export const readableList = (products: Row[]) =>
   products.map(
     (productData) =>
-      `${terminalLink(
-        productData.product.provider.name,
-        productData.product.urlEncoded,
-      )}: €${productData.pricePerLiter}/L (${productData.product.amount}L)`,
+      `${terminalLink(productData.name, productData.url)}: €${
+        productData.pricePerLiter
+      }/L (${productData.amount}L)`,
   );
 
 export function logAndReturn<V>(value: V): V {

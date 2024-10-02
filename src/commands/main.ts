@@ -1,5 +1,4 @@
 import { Scraper } from "../model/scraper";
-import { PRODUCTS } from "../resources/products";
 import { Storage } from "../adapter/storage";
 import { MailWriter } from "../adapter/mail-writer";
 import chalk from "chalk";
@@ -13,9 +12,7 @@ export async function main(args: Args) {
     notionDbId: args.notionDbId,
   });
 
-  const prices = await storage.getPrices();
-  // const products: Product[] = prices.map(({}) => new Product(new Provider(), ))
-  const scraper = new Scraper(PRODUCTS);
+  const scraper = new Scraper(await storage.getPrices());
   const mailWriter = new MailWriter();
 
   console.log(
@@ -24,19 +21,21 @@ export async function main(args: Args) {
     ),
   );
 
-  await scraper.fetchBioEthanols();
+  await scraper.scrapeBioEthanolPrices();
   const mostExpensive = scraper.mostExpensive;
   const cheapest = scraper.cheapest;
   const list = scraper.list;
+
+  if (!mostExpensive || !cheapest) {
+    console.log(chalk.magenta(`🚫 Something went wrong`));
+    process.exit(1);
+  }
 
   console.log(
     chalk.bold.red(
       `\n📈 Highest price per liter is ${
         mostExpensive.pricePerLiter
-      } at ${terminalLink(
-        mostExpensive.product.provider.name,
-        mostExpensive.product.urlEncoded,
-      )}`,
+      } at ${terminalLink(mostExpensive.name, mostExpensive.url)}`,
     ),
   );
 
@@ -44,10 +43,7 @@ export async function main(args: Args) {
     chalk.bold.green(
       `\n📉 Lowest price per liter is ${
         cheapest.pricePerLiter
-      } at ${terminalLink(
-        cheapest.product.provider.name,
-        cheapest.product.urlEncoded,
-      )}`,
+      } at ${terminalLink(cheapest.name, cheapest.url)}`,
     ),
   );
 
@@ -57,23 +53,11 @@ export async function main(args: Args) {
     )}`,
   );
 
-  const savedPrices = await storage.getPrices();
-  console.log(savedPrices);
-
   console.log(`💾 Saving new prices`);
-  await storage.updatePrices(scraper.list);
+  await storage.updatePrices(scraper.rows);
 
   console.log(`♻️ Comparing to previous prices`);
-  // TODO: compare
-  const highestPPL = 0;
-  const lowestPPL = 0;
-
-  if (
-    !(
-      mostExpensive.pricePerLiter !== highestPPL ||
-      cheapest.pricePerLiter !== lowestPPL
-    )
-  ) {
+  if (mostExpensive.status !== "📈" && cheapest.status !== "📉") {
     console.log(chalk.magenta(`🚫 No new prices found`));
     process.exit(0);
   }
@@ -83,14 +67,14 @@ export async function main(args: Args) {
   if (args.sendMail) {
     console.log(chalk.cyan(`📬 Writing e-mail`));
 
-    if (mostExpensive.pricePerLiter !== highestPPL) {
+    if (mostExpensive.status === "📈") {
       mailWriter.append(
-        `📈 Highest price per liter went from ${highestPPL} to ${mostExpensive.pricePerLiter} at [${mostExpensive.product.provider.name}](${mostExpensive.product.url})\n`,
+        `📈 Highest price per liter raised to ${mostExpensive.pricePerLiter} at [${mostExpensive.name}](${mostExpensive.url})\n`,
       );
     }
-    if (cheapest.pricePerLiter !== lowestPPL) {
+    if (cheapest.status === "📉") {
       mailWriter.append(
-        `📉 Lowest price per liter went from ${lowestPPL} to ${cheapest.pricePerLiter} at [${cheapest.product.provider.name}](${cheapest.product.url})\n`,
+        `📉 Lowest price per liter lowered to ${cheapest.pricePerLiter} at [${cheapest.name}](${cheapest.url})\n`,
       );
     }
     mailWriter.append(`\n📃 Other prices:\n`);
@@ -98,7 +82,7 @@ export async function main(args: Args) {
       list
         .map(
           (product) =>
-            `- [${product.product.provider.name}](${product.product.urlEncoded}): €${product.pricePerLiter}/L (${product.product.amount}L)`,
+            `- [${product.name}](${product.url}): €${product.pricePerLiter}/L (${product.amount}L)`,
         )
         .join("\n"),
     );

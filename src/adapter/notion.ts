@@ -25,7 +25,7 @@ export class Notion {
     });
   }
 
-  async getRows<K extends string, V>(): Promise<Record<K, V>[]> {
+  async getRows<R>(): Promise<R[]> {
     const { results } = await this.client.databases.query({
       database_id: this.db,
     });
