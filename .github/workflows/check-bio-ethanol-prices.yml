@@ -21,7 +21,8 @@ jobs:
 
       - run: pnpm start
         env:
-          JSONBIN_AUTH: ${{ secrets.JSONBIN_AUTH }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          NOTION_AUTH: ${{ secrets.NOTION_AUTH }}
 
       - uses: andstor/file-existence-action@v2
         if: github.ref == 'refs/heads/main'
