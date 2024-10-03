@@ -2,7 +2,9 @@ name: Check bio-ethanol prices
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
+      - "dependabot/**"
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -20,11 +22,12 @@ jobs:
           JSONBIN_AUTH: ${{ secrets.JSONBIN_AUTH }}
 
       - uses: andstor/file-existence-action@v2
+        if: github.ref == 'refs/heads/main'
         id: check_files
         with:
           files: "mail.md"
       - uses: dawidd6/action-send-mail@v3
-        if: steps.check_files.outputs.files_exists == 'true'
+        if: github.ref == 'refs/heads/main' && steps.check_files.outputs.files_exists == 'true'
         with:
           server_address: smtp.gmail.com
           server_port: 465
