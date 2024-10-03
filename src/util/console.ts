@@ -1,6 +1,5 @@
 import terminalLink from "terminal-link";
-import { ProductData } from "../model/product.data";
-import { Row } from "../adapter/storage";
+import { Row } from "../adapters/storage";
 
 export const readableList = (products: Row[]) =>
   products.map(

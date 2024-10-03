@@ -3,6 +3,8 @@ import { hideBin } from "yargs/helpers";
 import { main } from "./commands/main";
 
 export interface Args {
+  testRun: boolean;
+  openaiApiKey: string;
   notionAuth: string;
   notionDbId: string;
   ci: boolean;
@@ -14,6 +16,16 @@ export interface Args {
 yargs(hideBin(process.argv))
   .env()
   .options({
+    testRun: {
+      demandOption: false,
+      type: "boolean",
+      default: true,
+    },
+    openaiApiKey: {
+      demandOption: false,
+      type: "string",
+      describe: "API key for OpenAi",
+    },
     notionToken: {
       demandOption: false,
       type: "string",

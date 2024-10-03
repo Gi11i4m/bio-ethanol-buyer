@@ -1,6 +1,6 @@
 import axios from "axios";
 import terminalLink from "terminal-link";
-import { Row } from "../adapter/storage";
+import { Row } from "../adapters/storage";
 import { maxBy, minBy } from "lodash";
 import { JSDOM } from "jsdom";
 
