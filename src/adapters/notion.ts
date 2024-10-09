@@ -33,10 +33,12 @@ export class Notion {
     return results.map((res) => this.propertiesToRow(res.properties));
   }
 
-  async updateRow<Key extends string, Value>(
+  async upsertRow<Key extends string, Value extends NotionPrimitiveRowValue>(
     row: Record<Key, Value>,
     titlePropertyName: Key,
   ) {
+    await this.migrateDb(row, titlePropertyName);
+
     const rows = await this.client.databases.query({
       database_id: this.db,
       filter: {
@@ -46,28 +48,40 @@ export class Notion {
     });
     const matchingPage = rows.results[0];
     if (matchingPage) {
-      await this.client.pages.update({
+      return await this.client.pages.update({
         page_id: matchingPage.id,
         // @ts-expect-error
         properties: this.rowToProperties(row, titlePropertyName),
       });
     }
+    return await this.client.pages.create({
+      parent: { database_id: this.db },
+      // @ts-expect-error
+      properties: this.rowToProperties(row, titlePropertyName),
+    });
   }
+
+  private async migrateDb(
+    row: Record<string, NotionPrimitiveRowValue>,
+    titlePropertyName: string,
+  ) {}
 
   private rowToProperties(
     row: NotionRow,
     titlePropertyName: string,
   ): Record<string, NotionRowValue> {
     return Object.fromEntries<NotionRowValue>(
-      Object.entries(row).map(([name, value]) => [
-        uppercaseFirstLetter(name),
-        this.toDbValue(value, name === titlePropertyName),
-      ]),
+      Object.entries(row)
+        .filter(([_, value]) => !!value)
+        .map(([name, value]) => [
+          uppercaseFirstLetter(name),
+          this.toDbValue(value, name === titlePropertyName),
+        ]),
     );
   }
 
   private toDbValue(
-    value: string | number | boolean,
+    value: NotionPrimitiveRowValue,
     isTitle = false,
   ): NotionRowValue {
     if (typeof value === "string") {

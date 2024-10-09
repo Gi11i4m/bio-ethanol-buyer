@@ -18,12 +18,3 @@ export function replaceFirstLetter(
   }
   return `${replacer(text.substring(0, 1))}${text.substring(1)}`;
 }
-
-export function clean(text: string | null | undefined) {
-  return text
-    ? text
-        .trim()
-        .replaceAll("\n", "")
-        .replace(/ +(?= )/g, "")
-    : "";
-}
