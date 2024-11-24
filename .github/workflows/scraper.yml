@@ -1,4 +1,4 @@
-name: Check bio-ethanol prices
+name: Scraper
 
 on:
   pull_request:

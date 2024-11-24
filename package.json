@@ -1,5 +1,5 @@
 {
-  "name": "bio-ethanol-buyer",
+  "name": "scraper",
   "scripts": {
     "start": "tsx --env-file .env src/index.ts",
     "pre-commit": "pnpm install && tsc -p . --noEmit && prettier -w ./src/**"
