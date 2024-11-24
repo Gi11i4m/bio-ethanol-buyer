@@ -18,11 +18,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: asdf-vm/actions/install@v2
       - run: pnpm install
-      - run: echo "${{secrets.MAIL_USERNAME}} ${{secrets.MAIL_PASSWORD}}" | sed 's/./& /g'
+      - run: pnpm start
         env:
           MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
           MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
-      - run: pnpm start
-        env:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
-          NOTION_AUTH: ${{ secrets.NOTION_AUTH }}
+          NOTION_TOKEN: ${{ secrets.NOTION_AUTH }}
