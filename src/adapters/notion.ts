@@ -33,17 +33,17 @@ export class Notion {
     return results.map((res) => this.propertiesToRow(res.properties));
   }
 
-  async upsertRow<Key extends string, Value extends NotionPrimitiveRowValue>(
-    row: Record<Key, Value>,
-    titlePropertyName: Key,
+  async upsertRow<ROW extends NotionRow>(
+    row: ROW,
+    titlePropertyName: keyof ROW,
   ) {
-    await this.migrateDb(row, titlePropertyName);
+    await this.migrateDb(row, titlePropertyName as string);
 
     const rows = await this.client.databases.query({
       database_id: this.db,
       filter: {
         title: { equals: row[titlePropertyName] as string },
-        property: uppercaseFirstLetter(titlePropertyName),
+        property: uppercaseFirstLetter(titlePropertyName as string),
       },
     });
     const matchingPage = rows.results[0];

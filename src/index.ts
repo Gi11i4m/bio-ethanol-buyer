@@ -19,7 +19,7 @@ yargs(hideBin(process.argv))
     testRun: {
       demandOption: false,
       type: "boolean",
-      default: true,
+      default: false,
     },
     notionToken: {
       demandOption: false,
