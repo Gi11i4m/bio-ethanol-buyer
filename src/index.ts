@@ -5,7 +5,7 @@ import { main } from "./commands/main";
 export interface Args {
   testRun: boolean;
   openaiApiKey: string;
-  notionAuth: string;
+  notionToken: string;
   notionDbId: string;
   ci: boolean;
   mailUsername: string;

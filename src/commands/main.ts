@@ -8,7 +8,7 @@ import { conjugate } from "../util/string";
 
 export async function main(args: Args) {
   const scraper = new Scraper(SCRAPER_CONFIG);
-  const notion = new Notion(args.notionAuth, args.notionDbId);
+  const notion = new Notion(args.notionToken, args.notionDbId);
   const mailer = new Mailer();
 
   const previousScrapeResults = await notion.getRows<NotionRow>();
