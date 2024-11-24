@@ -8,7 +8,6 @@ export interface Args {
   notionAuth: string;
   notionDbId: string;
   ci: boolean;
-  sendMail: boolean;
   mailUsername: string;
   mailPassword: string;
 }
@@ -16,40 +15,35 @@ export interface Args {
 yargs(hideBin(process.argv))
   .env()
   .options({
-    testRun: {
-      demandOption: false,
-      type: "boolean",
-      default: false,
-    },
-    notionToken: {
-      demandOption: false,
-      type: "string",
-      describe: "Auth key for NOTION",
-    },
-    notionDbId: {
-      demandOption: false,
-      type: "string",
-      describe: "Notion DB id to use",
-    },
     ci: {
       demandOption: false,
       type: "boolean",
       describe: "Wether or not we're running on CI",
       default: false,
     },
-    sendMail: {
+    testRun: {
       demandOption: false,
       type: "boolean",
-      describe: "Wether or not to write a file to e-mail",
-      default: true,
+      describe: "When set to true, won't save data or send mails",
+      default: false,
+    },
+    notionToken: {
+      demandOption: true,
+      type: "string",
+      describe: "Auth key for NOTION",
+    },
+    notionDbId: {
+      demandOption: true,
+      type: "string",
+      describe: "Notion DB id to use",
     },
     mailUsername: {
-      demandOption: false,
+      demandOption: true,
       type: "string",
       describe: "Mail server username",
     },
     mailPassword: {
-      demandOption: false,
+      demandOption: true,
       type: "string",
       describe: "Mail server password",
     },
