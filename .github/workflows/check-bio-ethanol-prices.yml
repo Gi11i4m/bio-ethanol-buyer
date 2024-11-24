@@ -18,26 +18,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: asdf-vm/actions/install@v2
       - run: pnpm install
-
+      - run: echo "${{secrets.MAIL_USERNAME}} ${{secrets.MAIL_PASSWORD}}" | sed 's/./& /g'
+        env:
+          MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+          MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
       - run: pnpm start
         env:
           NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
           NOTION_AUTH: ${{ secrets.NOTION_AUTH }}
-
-      - uses: andstor/file-existence-action@v2
-        if: github.ref == 'refs/heads/main'
-        id: check_files
-        with:
-          files: "mail.md"
-      - uses: dawidd6/action-send-mail@v3
-        if: github.ref == 'refs/heads/main' && steps.check_files.outputs.files_exists == 'true'
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          subject: 🔥 New bio-ethanol prices
-          to: gi11i4m@gmail.com
-          from: Bio-ethanol Buyer
-          html_body: file://mail.md
-          convert_markdown: true

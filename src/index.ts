@@ -21,11 +21,6 @@ yargs(hideBin(process.argv))
       type: "boolean",
       default: true,
     },
-    openaiApiKey: {
-      demandOption: false,
-      type: "string",
-      describe: "API key for OpenAi",
-    },
     notionToken: {
       demandOption: false,
       type: "string",

@@ -18,3 +18,7 @@ export function replaceFirstLetter(
   }
   return `${replacer(text.substring(0, 1))}${text.substring(1)}`;
 }
+
+export function conjugate(word: string, amount: number) {
+  return `${amount} ${amount === 1 ? word : `${word}s`}`;
+}
